@@ -1,0 +1,17 @@
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.farApart {
+  display: flex;
+  justify-content: space-between;
+}
+
+::ng-deep {
+  .emoji-mart {
+    position: absolute;
+    z-index: 1;
+    bottom: 3em;
+  }
+}

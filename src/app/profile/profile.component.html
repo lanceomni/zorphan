@@ -1,0 +1,102 @@
+<h1 mat-dialog-title>{{data.title}}</h1>
+<div mat-dialog-content style="text-align: center;">
+  <form [formGroup]="userFormGroup" class="form" (ngSubmit)="save(userFormGroup)">
+    <span>
+      <mat-form-field appearance="outline">
+        <mat-label>First Name</mat-label>
+        <input matInput formControlName="firstName">
+        <mat-error *ngIf="userFormGroup.get('firstName')?.hasError('required')">
+          Required
+        </mat-error>
+      </mat-form-field>
+    </span>
+    <span>
+      <mat-form-field appearance="outline">
+        <mat-label>Last Name</mat-label>
+        <input matInput formControlName="lastName">
+        <mat-error *ngIf="userFormGroup.get('lastName')?.hasError('required')">
+          Required
+        </mat-error>
+      </mat-form-field>
+    </span>
+    <span>
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email">
+        <mat-error *ngIf="userFormGroup.get('email')?.hasError('required')">
+          Required
+        </mat-error>
+        <mat-error *ngIf="userFormGroup.get('email')?.hasError('email')">
+          Invalid email address
+        </mat-error>
+      </mat-form-field>
+    </span>
+    <span>
+      <mat-form-field appearance="outline">
+        <mat-label>Mobile Number</mat-label>
+        <input matInput formControlName="mobileNumber">
+        <mat-error *ngIf="userFormGroup.get('mobileNumber')?.hasError('required')">
+          Required
+        </mat-error>
+        <mat-error *ngIf="userFormGroup.get('mobileNumber')?.hasError('invalidPhone')">
+          Invalid phone number
+        </mat-error>  
+      </mat-form-field>
+    </span>
+    <span>
+      <mat-form-field appearance="outline">
+        <mat-label>userName</mat-label>
+        <input matInput placeholder="User Name" formControlName="userName">
+        <mat-error *ngIf="userFormGroup.get('userName')?.hasError('required')">
+          Required
+        </mat-error>
+      </mat-form-field>
+    </span>
+    <span *ngIf="!data.user || !data.user.id">
+      <mat-form-field appearance="outline">
+        <mat-label>password</mat-label>
+        <input type="password" matInput placeholder="password" formControlName="password">
+        <mat-error *ngIf="userFormGroup.get('password')?.hasError('required')">
+          Required
+        </mat-error>
+      </mat-form-field>
+    </span>
+    <span *ngIf="!data.user || !data.user.id">
+      <mat-form-field appearance="outline">
+        <mat-label>re-type assword</mat-label>
+        <input type="password" matInput formControlName="rPassword">
+        <mat-error *ngIf="userFormGroup.get('rPassword')?.hasError('required')">
+          Required
+        </mat-error>
+      </mat-form-field>
+    </span>
+    <span>
+      <mat-form-field appearance="outline">
+        <mat-label>Time Zone</mat-label>
+        <mat-select formControlName="timeZoneName">
+          <mat-option *ngFor="let timeZone of timeZones" [value]="timeZone.timeZoneName">
+            {{ timeZone.timeZoneName }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="userFormGroup.get('timeZoneName')?.hasError('required')">
+          Required
+        </mat-error>
+      </mat-form-field>
+    </span>
+    <span>
+      <mat-form-field appearance="outline">
+        <mat-label>Title</mat-label>
+        <input matInput formControlName="title">
+      </mat-form-field>
+    </span>
+    <span>
+      <mat-checkbox formControlName="isAdmin">Is Admin</mat-checkbox>
+    </span>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <span>
+    <button mat-flat-button color="accent" [mat-dialog-close]="false">Close</button>
+    <button mat-flat-button color="primary" [disabled]="!userFormGroup.valid" (click)="save(userFormGroup)">Save</button>
+  </span>
+</div>

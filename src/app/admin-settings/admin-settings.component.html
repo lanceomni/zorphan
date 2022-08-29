@@ -1,0 +1,190 @@
+<h1 mat-dialog-title>{{data.title}}</h1>
+<div mat-dialog-content>
+  <mat-stepper orientation="horizontal" #stepper color="primary" linear="true">
+    <mat-step [completed]="accountStepComplete">
+      <ng-template matStepLabel>Account Name</ng-template>
+      <form [formGroup]="accountFormGroup">
+        <mat-form-field appearance="outline">
+          <mat-label>Account Name</mat-label>
+          <input matInput formControlName="accountName" required>
+        </mat-form-field>
+      </form>
+      <div class="spacedEle">
+        <button mat-flat-button color="primary" *ngIf="data.account && data.account.id" (click)="nextStep(stepper)">Next</button>
+        <button mat-flat-button color="accent" (click)="saveAccount(accountFormGroup.value.accountName)"> {{ (data.account && data.account.id) ? 'Update' : 'Create' }} Account</button>
+      </div>
+    </mat-step>
+    <mat-step [completed]="phoneStepComplete">
+      <ng-template matStepLabel>Account Phone</ng-template>
+      <button mat-flat-button color="accent" (click)="addNewAccountPhone()">
+        Add New Account Phone
+      </button>
+      <div class="usersHolder">
+        <h3>Account Phones</h3>
+        <h4 *ngIf="accountPhones && !accountPhones.length">No account phones added</h4>
+        <!-- <mat-list role="list"> -->
+          <div *ngFor="let phone of accountPhones; let i = index;">
+            <div>
+              <span *ngIf="!phone.edit">
+                {{ phone.accountPhone | phone }}
+              </span>
+              <span *ngIf="phone.edit">
+                <mat-form-field appearance="outline">
+                  <mat-label>Account Phone</mat-label>
+                  <input matInput [(ngModel)]="phone.accountPhone">
+                </mat-form-field>
+              </span>
+              <span *ngIf="!phone.edit">
+                <button mat-icon-button (click)="editPhone(phone)" matTooltip="Edit">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </span>
+              <span *ngIf="phone.edit" color="accent" matTooltip="Cancel">
+                <button mat-icon-button (click)="revertPhone(phone, i)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </span>
+              <span *ngIf="phone.edit">
+                <button mat-icon-button color="primary" (click)="saveAccountPhone(phone)" matTooltip="Save">
+                  <mat-icon>check</mat-icon>
+                </button>
+              </span>
+            </div>
+            <div class="phoneProp" *ngIf="phone.edit">
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>provider</mat-label>
+                  <mat-select [(ngModel)]="phone.providerId">
+                    <mat-option *ngFor="let provider of providers" [value]="provider.id">
+                      {{ provider.providerName }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div *ngFor="let contorl of getRequiredfields(phone.providerId)">
+                <mat-form-field class="full-width">
+                  <input type="text" matInput autocomplete="off" [(ngModel)]="phone[phone.providerId + contorl]" placeholder="{{ contorl }}">
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        <!-- </mat-list> -->
+      </div>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-flat-button color="primary" (click)="nextStep(stepper)">Next</button>
+      </div>
+    </mat-step>
+    <mat-step [completed]="userStepComplete">
+      <ng-template matStepLabel>Account Users</ng-template>
+      <div class="spacedEle">
+        <mat-form-field>
+          <mat-label>Users</mat-label>
+          <mat-select (selectionChange)="userSelected($event)">
+            <mat-option *ngFor="let globalUser of globalUsers" [value]="globalUser">
+              {{ globalUser.userName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <button mat-flat-button color="accent" (click)="openCreateUser()">Create New User</button>
+      </div>
+      <div class="usersHolder">
+        <div class="header dataRow">
+          <span>
+            User
+          </span>
+          <span>
+            Manage
+          </span>
+          <span>
+            Read
+          </span>
+          <span>
+            Send New
+          </span>
+          <span>
+            Reply
+          </span>
+          <span>
+            Send MMS
+          </span>
+          <span>
+            Delete Messages
+          </span>
+          <span>
+            Delete Conversation
+          </span>
+          <span>
+            Update Contact
+          </span>
+          <span>
+            Send to Group
+          </span>
+          <span>
+            Actions
+          </span>
+        </div>
+        <div class="dataRow" *ngFor="let user of accountUsers">
+          <span class="nameClmn">
+          {{ user.userName }}
+          </span>
+          <span>
+            <mat-checkbox [(ngModel)]="user.canManage" (change)="permissionUpdated(user)"></mat-checkbox>
+          </span>
+          <span>
+            <mat-checkbox [(ngModel)]="user.canRead" (change)="permissionUpdated(user)"></mat-checkbox>
+          </span>
+          <span>
+            <mat-checkbox [(ngModel)]="user.canSendNew" (change)="permissionUpdated(user)"></mat-checkbox>
+          </span>
+          <span>
+            <mat-checkbox [(ngModel)]="user.canReply" (change)="permissionUpdated(user)"></mat-checkbox>
+          </span>
+          <span>
+            <mat-checkbox [(ngModel)]="user.canSendMMS" (change)="permissionUpdated(user)"></mat-checkbox>
+          </span>
+          <span>
+            <mat-checkbox [(ngModel)]="user.canDeleteMessage" (change)="permissionUpdated(user)"></mat-checkbox>
+          </span>
+          <span>
+            <mat-checkbox [(ngModel)]="user.canDeleteConversation" (change)="permissionUpdated(user)"></mat-checkbox>
+          </span>
+          <span>
+            <mat-checkbox [(ngModel)]="user.canUpdateContact" (change)="permissionUpdated(user)"></mat-checkbox>
+          </span>
+          <span>
+            <mat-checkbox [(ngModel)]="user.canSendToGroup" (change)="permissionUpdated(user)"></mat-checkbox>
+          </span>
+          <span>
+            <button mat-icon-button color="primary" *ngIf="user.dirty" (click)="updateAccountUser(user)" matTooltip="Update">
+              <mat-icon>save</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="removeAccountUser(user)" matTooltip="Remove">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </span>
+        </div>
+      </div>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-flat-button color="primary" (click)="nextStep(stepper)">Next</button>
+      </div>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Account Settings</ng-template>
+      <p>Settings placeholder</p>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-flat-button ></button>
+      </div>
+    </mat-step>
+  </mat-stepper>
+  
+
+</div>
+<div mat-dialog-actions>
+  <span>
+    <!-- <button mat-flat-button color="accent" (click)="close()">Close</button> -->
+    <!-- <button mat-flat-button color="primary" (click)="saveUserSettings()">Save</button> -->
+  </span>
+</div>
